@@ -293,6 +293,6 @@ class UserController
     private function checkTokenScope(Token $token, string $scope): bool
     {
         $scopes = $token->getClaim('scopes', null);
-        return in_array($scope, $scopes, true);
+        return (bool) in_array($scope, $scopes, true);
     }
 }

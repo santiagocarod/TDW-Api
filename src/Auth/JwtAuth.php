@@ -91,7 +91,10 @@ final class JwtAuth
     public function createJwt(User $user, array $requestedScopes = Role::ROLES): string
     {
         $issuedAt = Chronos::now()->getTimestamp();
-        $awardedScopes = array_intersect($requestedScopes, $user->getRoles());
+        (!in_array(Role::ROLE_READER, $requestedScopes))
+            ? $requestedScopes[] = Role::ROLE_READER
+            : null;
+        $awardedScopes = array_values(array_intersect($requestedScopes, $user->getRoles()));
 
         // (JWT ID) Claim, a unique identifier for the JWT
         return (new Builder())->issuedBy($this->issuer)
