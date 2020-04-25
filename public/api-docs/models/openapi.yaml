@@ -20,6 +20,10 @@ tags:
     description: 'User management'
   - name: Products
     description: 'Product management'
+  - name: People
+    description: 'People management'
+  - name: Entities
+    description: 'Entities management'
 paths:
   /access_token:
     post:
@@ -531,6 +535,322 @@ paths:
           $ref: '#/components/responses/Response_404'
         '406':
           $ref: '#/components/responses/Response_406'
+
+  /persons:
+    get:
+      tags: [ People ]
+      summary: Retrieves the collection of Product resources.
+      description: 'Returns all persons from the system that the user has access to.'
+      operationId: api_persons_cget
+      security:
+        - MiWApiSecurity: [ reader ]
+      responses:
+        '200':
+          description: 'Array of persons'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  persons: { description: 'People array', type: array, items: { $ref: '#/components/schemas/Product' } }
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+        '401':
+          $ref: '#/components/responses/Response_401'
+        '404':
+          $ref: '#/components/responses/Response_404'
+    post:
+      tags: [ People ]
+      summary: Creates a Product resource.
+      description: 'Creates a new product'
+      operationId: api_persons_post
+      security:
+        - MiWApiSecurity: [ writer ]
+      requestBody:
+        $ref: '#/components/requestBodies/ElementRequestBody'
+      responses:
+        '201':
+          description: '`Created`: product created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '400':
+          $ref: '#/components/responses/Response_400'
+        '401':
+          $ref: '#/components/responses/Response_401'
+        '403':
+          $ref: '#/components/responses/Response_403'
+        '422':
+          $ref: '#/components/responses/Response_422'
+    options:
+      tags: [ People ]
+      summary: Provides the list of HTTP supported methods.
+      description: 'Return a `Allow` header with a comma separated list of HTTP supported methods.'
+      operationId: api_persons_coptions
+      responses:
+        '200':
+          description: '`Allow` header &lt;Response body is empty&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+  '/persons/{personId}':
+      get:
+        tags: [ People ]
+        summary: Retrieves a Product resource based on a single ID.
+        description: 'Returns the product identified by `personId`.'
+        operationId: api_persons_get
+        security:
+          - MiWApiSecurity: [ reader ]
+        parameters:
+          - $ref: '#/components/parameters/personId'
+        responses:
+          '200':
+            description: Product
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Product'
+            headers:
+              ETag:
+                $ref: '#/components/headers/ETag'
+          '401':
+            $ref: '#/components/responses/Response_401'
+          '404':
+            $ref: '#/components/responses/Response_404'
+      put:
+        tags: [ People ]
+        summary: Updates the Product resource.
+        description: 'Updates the product identified by `personId`.'
+        operationId: api_persons_put
+        security:
+          - MiWApiSecurity: [ writer ]
+        parameters:
+          - $ref: '#/components/parameters/personId'
+        requestBody:
+          $ref: '#/components/requestBodies/ElementRequestBody'
+        responses:
+          '209':
+            description: '`Content Returned`: product previously existed and is now updated'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Product'
+          '400':
+            $ref: '#/components/responses/Response_400'
+          '401':
+            $ref: '#/components/responses/Response_401'
+          '403':
+            $ref: '#/components/responses/Response_403'
+          '404':
+            $ref: '#/components/responses/Response_404'
+      delete:
+        tags: [ People ]
+        summary: Removes the Product resource.
+        description: 'Deletes the product identified by `personId`.'
+        operationId: api_persons_delete
+        security:
+          - MiWApiSecurity: [ writer ]
+        parameters:
+          - $ref: '#/components/parameters/personId'
+        responses:
+          '204':
+            description: 'Product deleted &lt;Response body is empty&gt;'
+          '401':
+            $ref: '#/components/responses/Response_401'
+          '403':
+            $ref: '#/components/responses/Response_403'
+          '404':
+            $ref: '#/components/responses/Response_404'
+      options:
+        tags: [ People ]
+        summary: Provides the list of HTTP supported methods.
+        description: 'Return a `Allow` header with a comma separated list of HTTP supported methods.'
+        operationId: api_persons_options_id
+        parameters:
+          - $ref: '#/components/parameters/personId'
+        responses:
+          '200':
+            description: '`Allow` header &lt;Response body is empty&gt;'
+            headers:
+              Allow:
+                $ref: '#/components/headers/Allow'
+  '/persons/personname/{personname}':
+      get:
+        tags: [ People ]
+        summary: 'Determines if productname exists'
+        description: 'Returns status code 204 if `productname` exists.'
+        operationId: tdw_get_product_name
+        parameters:
+          - $ref: '#/components/parameters/productname'
+        responses:
+          '204':
+            description: 'Productname exists &lt;Response body is empty&gt;'
+          '404':
+            $ref: '#/components/responses/Response_404'
+  '/persons/{personId}/entities':
+      get:
+        tags: [ People ]
+        summary: List of entities related to the product
+        description: 'Returns the entities related to the product `personId`'
+        operationId: tdw_persons_get_entities
+        security:
+          - MiWApiSecurity: [ reader ]
+        parameters:
+          - $ref: '#/components/parameters/personId'
+        responses:
+          '200':
+            description: Array of Entities
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    entities: { description: 'Entity array', type: array, items: { $ref: '#/components/schemas/Entity' } }
+            headers:
+              ETag:
+                $ref: '#/components/headers/ETag'
+          '401':
+            $ref: '#/components/responses/Response_401'
+          '404':
+            $ref: '#/components/responses/Response_404'
+  '/persons/{personId}/products':
+      get:
+        tags: [ People ]
+        summary: List of products related to the person
+        description: 'Returns the products related to the product `personId`'
+        operationId: tdw_persons_get_persons
+        security:
+          - MiWApiSecurity: [ reader ]
+        parameters:
+          - $ref: '#/components/parameters/personId'
+        responses:
+          '200':
+            description: Array of Persons
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    persons: { description: 'Person array', type: array, items: { $ref: '#/components/schemas/Person' } }
+            headers:
+              ETag:
+                $ref: '#/components/headers/ETag'
+          '401':
+            $ref: '#/components/responses/Response_401'
+          '404':
+            $ref: '#/components/responses/Response_404'
+
+  '/persons/{personId}/entities/add/{entityId}':
+      put:
+        tags: [ People ]
+        summary: Sets the relationship product-entity
+        description: 'Establishes the relationship of the product with the entity'
+        operationId: tdw_persons_add_entity
+        security:
+          - MiWApiSecurity: [ writer ]
+        parameters:
+          - $ref: '#/components/parameters/personId'
+          - $ref: '#/components/parameters/entityId'
+        responses:
+          '209':
+            description: '`Content Returned`: product is now updated'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Product'
+          '401':
+            $ref: '#/components/responses/Response_401'
+          '403':
+            $ref: '#/components/responses/Response_403'
+          '404':
+            $ref: '#/components/responses/Response_404'
+          '406':
+            $ref: '#/components/responses/Response_406'
+  '/persons/{personId}/entities/rem/{entityId}':
+      put:
+        tags: [ People ]
+        summary: Remove the relationship product-entity
+        description: 'Removes the relationship of the product with the entity'
+        operationId: tdw_persons_rem_entity
+        security:
+          - MiWApiSecurity: [ writer ]
+        parameters:
+          - $ref: '#/components/parameters/personId'
+          - $ref: '#/components/parameters/entityId'
+        responses:
+          '209':
+            description: '`Content Returned`: product is now updated'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Product'
+          '401':
+            $ref: '#/components/responses/Response_401'
+          '403':
+            $ref: '#/components/responses/Response_403'
+          '404':
+            $ref: '#/components/responses/Response_404'
+          '406':
+            $ref: '#/components/responses/Response_406'
+  '/persons/{personId}/products/add/{productId}':
+      put:
+        tags: [ People ]
+        summary: Sets the relationship product-person
+        description: 'Establishes the relationship of the product with the person'
+        operationId: tdw_persons_add_person
+        security:
+          - MiWApiSecurity: [ writer ]
+        parameters:
+          - $ref: '#/components/parameters/personId'
+          - $ref: '#/components/parameters/productId'
+        responses:
+          '209':
+            description: '`Content Returned`: product is now updated'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Product'
+          '401':
+            $ref: '#/components/responses/Response_401'
+          '403':
+            $ref: '#/components/responses/Response_403'
+          '404':
+            $ref: '#/components/responses/Response_404'
+          '406':
+            $ref: '#/components/responses/Response_406'
+
+  '/persons/{personId}/products/rem/{productId}':
+      put:
+        tags: [ People ]
+        summary: Remove the relationship product-person
+        description: 'Removes the relationship of the product with the person'
+        operationId: tdw_persons_rem_person
+        security:
+          - MiWApiSecurity: [ writer ]
+        parameters:
+          - $ref: '#/components/parameters/personId'
+          - $ref: '#/components/parameters/productId'
+        responses:
+          '209':
+            description: '`Content Returned`: product is now updated'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Product'
+          '401':
+            $ref: '#/components/responses/Response_401'
+          '403':
+            $ref: '#/components/responses/Response_403'
+          '404':
+            $ref: '#/components/responses/Response_404'
+          '406':
+            $ref: '#/components/responses/Response_406'
+
 
 components:
   schemas:

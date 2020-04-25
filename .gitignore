@@ -5,6 +5,8 @@
 /config/*.pem
 /logs/*.log
 /logs/*.xml
+bin/
+composer.lock
 
 # JIRA plugin
 atlassian-ide-plugin.xml
