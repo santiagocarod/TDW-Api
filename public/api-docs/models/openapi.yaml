@@ -686,7 +686,7 @@ paths:
         description: 'Returns status code 204 if `productname` exists.'
         operationId: tdw_get_product_name
         parameters:
-          - $ref: '#/components/parameters/productname'
+          - $ref: '#/components/parameters/personname'
         responses:
           '204':
             description: 'Productname exists &lt;Response body is empty&gt;'
@@ -1138,7 +1138,18 @@ components:
       description: 'Product name'
       required: true
       schema: {"type": "string", pattern: '^[a-zA-Z0-9()áéíóúÁÉÍÓÚñÑ %$\.+-]+$'}
-
+    personname:
+      name: personname
+      in: path
+      description: 'Person name'
+      required: true
+      schema: {"type": "string", pattern: '^[a-zA-Z0-9()áéíóúÁÉÍÓÚñÑ %$\.+-]+$'}
+    entityname:
+      name: entityname
+      in: path
+      description: 'Entity name'
+      required: true
+      schema: {"type": "string", pattern: '^[a-zA-Z0-9()áéíóúÁÉÍÓÚñÑ %$\.+-]+$'}
   headers:
     ETag:
       description: Entity Tag (unique identifier provided for cache validation)
